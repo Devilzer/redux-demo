@@ -1,8 +1,9 @@
 const redux = require("redux");
 const createStore = redux.createStore;
-
+const combineReducers = redux.combineReducers;
 //Action
 const BUY_CAKE = "BUY_CAKE";
+const BUY_ICECREAM ="BUT_ICECREAM";
 
 function buyCake(){
     return{
@@ -10,13 +11,39 @@ function buyCake(){
         info :'First Redux Action'
     }
 }
-
-//reducer
-const initialState ={
-    numOfCake :10
+function buyIcecream(){
+    return{
+        type : BUY_ICECREAM
+    }
 }
 
-const reducer = (state = initialState ,action)=>{
+//single reducer==================================================================
+// const initialState ={
+//     numOfCake :10,
+//     numOfIcecream:20
+// }
+
+// const reducer = (state = initialState ,action)=>{
+//     switch (action.type) {
+//         case BUY_CAKE: return{
+//             ...state,
+//             numOfCake : state.numOfCake -1 
+//         }
+//         case BUY_ICECREAM: return{
+//             ...state,
+//             numOfIcecream : state.numOfIcecream -1 
+//         }
+//         default: return state
+//     }
+// };
+//multiple reducer===================================================================
+const initialCakeState = {
+    numOfCake :10
+}
+const initialIcecreamState = {
+    numOfIcecream :20
+}
+const cakeReducer = (state = initialCakeState ,action)=>{
     switch (action.type) {
         case BUY_CAKE: return{
             ...state,
@@ -26,10 +53,26 @@ const reducer = (state = initialState ,action)=>{
     }
 };
 
-const store = createStore(reducer);
+const icecreamReducer = (state = initialIcecreamState ,action)=>{
+    switch (action.type) {
+        case BUY_ICECREAM: return{
+            ...state,
+            numOfIcecream : state.numOfIcecream -1 
+        }
+        default: return state
+    }
+};
+const rootReducer = combineReducers({
+    cake : cakeReducer,
+    iceCreame : icecreamReducer
+});
+
+const store = createStore(rootReducer);
 console.log("initial State ",store.getState());
 const unsubscribe =store.subscribe(()=>console.log('updated state ',store.getState()));
 store.dispatch(buyCake());
 store.dispatch(buyCake());
 store.dispatch(buyCake());
+store.dispatch(buyIcecream());
+store.dispatch(buyIcecream());
 unsubscribe();
